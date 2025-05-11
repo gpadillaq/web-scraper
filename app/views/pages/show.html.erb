@@ -1,0 +1,26 @@
+<h1>Links for <%= @page.title %></h1>
+<p><strong>URL:</strong> <%= @page.url %></p>
+<p><strong>Status:</strong> <%= @page.status %></p>
+
+<%= link_to 'Back to List', pages_path %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @links.each do |link| %>
+      <tr>
+        <td><%= link.name %></td>
+        <td><%= link_to link.url, link.url, target: '_blank' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="pagination">
+  <%= paginate @links %>
+</div>

@@ -18,6 +18,15 @@
   </head>
 
   <body>
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+    <% if user_signed_in? %>
+      <div style="text-align: right; padding: 10px;">
+        Logged in as <%= current_user.email %>
+        |
+        <%= button_to 'Logout', destroy_user_session_path, method: :delete, form: { style: 'display: inline' } %>
+      </div>
+    <% end %>
     <%= yield %>
   </body>
 </html>

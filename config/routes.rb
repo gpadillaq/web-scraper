@@ -11,4 +11,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  devise_for :users, skip: [ :passwords, :confirmations, :unlocks ]
+  resources :pages, only: [ :index, :show, :create ]
+  root "pages#index"
+  require "sidekiq/web"
+  authenticate :user do
+    mount Sidekiq::Web => "/sidekiq"
+  end
 end

@@ -1,0 +1,36 @@
+<h1>Scrape a New Web Page</h1>
+
+<%= form_with model: Page.new, url: pages_path, local: true do |form| %>
+  <div>
+    <%= form.label :url, "Enter a webpage URL" %><br>
+    <%= form.url_field :url, placeholder: "https://example.com", required: true %>
+    <%= form.submit "Scrape", class: "btn" %>
+  </div>
+<% end %>
+
+<hr>
+
+<h2>Your Scraped Pages</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>URL</th>
+      <th>Status</th>
+      <th>Links Found</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pages.each do |page| %>
+      <tr>
+        <td><%= link_to page.title.presence || "Untitled", page_path(page) %></td>
+        <td><%= page.url %></td>
+        <td><%= page.status %></td>
+        <td><%= page.links.count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @pages %>
