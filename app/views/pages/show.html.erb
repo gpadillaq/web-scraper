@@ -15,7 +15,7 @@
     <% @links.each do |link| %>
       <tr>
         <td><%= link.name %></td>
-        <td><%= link_to link.url, link.url, target: '_blank' %></td>
+        <td><%= link_to sanitize(link.url), safe_url(link.url), target: "_blank" %></td>
       </tr>
     <% end %>
   </tbody>

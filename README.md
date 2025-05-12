@@ -1,3 +1,69 @@
+# Project Code Review & Setup Guide
+
+## Code Review Summary
+
+### General Structure
+
+- The project follows a standard Rails 7 structure, with clear separation of concerns (controllers, models, jobs, views, etc.).
+- Uses Devise for authentication, Sidekiq for background jobs, Kaminari for pagination, and HTTParty for HTTP requests.
+- Docker and Docker Compose are used for local development, providing isolated services for PostgreSQL and Redis.
+- The code is clean and leverages Rails conventions.
+
+## Main Packages Used
+
+- **rails**: Main web framework.
+- **devise**: User authentication.
+- **sidekiq**: Background job processing.
+- **kaminari**: Pagination for ActiveRecord collections.
+- **httparty**: HTTP client for making web requests.
+- **pg**: PostgreSQL database adapter.
+- **sprockets-rails, turbo-rails, stimulus-rails, importmap-rails**: Asset management and Hotwire SPA features.
+- **rspec-rails, capybara, factory_bot_rails, webmock, database_cleaner-active_record, shoulda-matchers**: Testing and test utilities.
+
+## Running the Project with Docker
+
+1. **Build and start the services:**
+
+   ```sh
+   docker compose up --build
+   ```
+
+   This will start the web server, Sidekiq, PostgreSQL, and Redis. The Rails app will be available at http://localhost:3000.
+
+2. **Set up the database:**
+   In a separate terminal, run:
+
+   ```sh
+   docker compose run web rails db:create db:migrate
+   ```
+
+3. **Access Sidekiq dashboard:**
+   - Visit http://localhost:3000/sidekiq (requires authentication).
+
+## Running Tests
+
+1. **Run all tests:**
+
+   ```sh
+   docker compose run --rm -e RAILS_ENV=test web bundle exec rspec
+   ```
+
+2. **Run a specific test file:**
+   ```sh
+   docker compose run --rm -e RAILS_ENV=test web bundle exec rspec spec/models/page_spec.rb
+   ```
+
+## Notes
+
+- Environment variables for database and Redis are set in `docker-compose.yml`.
+- Credentials are managed via Rails encrypted credentials (`config/master.key`).
+- For production, set `RAILS_ENV=production` and provide the correct `RAILS_MASTER_KEY`.
+- Static analysis and linting can be run with:
+  - `bin/brakeman` (security)
+  - `bin/rubocop` (style)
+
+---
+
 # Project Setup Guide
 
 ## 1. Prerequisites
@@ -6,7 +72,6 @@
   (Defined in `.ruby-version` and Dockerfile. Use rbenv, rvm, or as provided by Docker.)
 - **Bundler:** Install with `gem install bundler` if not present.
 - **Docker & Docker Compose:** Required for local development and service orchestration.
-- **macOS or Unix-like OS:** (You are on macOS.)
 
 ## 2. System Dependencies
 
@@ -22,18 +87,18 @@
    - Ensure `config/master.key` exists (copy from `config/master.key.example` if needed).
    - Make sure `config/credentials/development.yml.enc` and `config/credentials/development.key` exist for development credentials.
 3. **Configuration files:**
-   - Database configuration is handled by `config/database.yml` and environment variables in `docker-compose.yml`.
+   - Database configuration is handled by `config/database.yml` and environment variables in `docker compose.yml`.
 
 ## 4. Installing Dependencies
 
 - **With Docker (recommended):**
-  All dependencies are installed automatically during `docker-compose build`.
+  All dependencies are installed automatically during `docker compose build`.
 - **Locally (not recommended):**
   Run `bundle install` to install Ruby gems.
 
 ## 5. Environment Variables
 
-- Set in `docker-compose.yml` for local development:
+- Set in `docker compose.yml` for local development:
   - `POSTGRES_USER=postgres`
   - `POSTGRES_PASSWORD=password`
   - `POSTGRES_DB=web_scraper_development`
@@ -43,7 +108,7 @@
 
 - Start all services (web, db, redis, sidekiq) with:
   ```
-  docker-compose up
+  docker compose up
   ```
 - The Rails server will be available at [http://localhost:3000](http://localhost:3000).
 
@@ -51,7 +116,7 @@
 
 - To create and migrate the database, run:
   ```
-  docker-compose run web rails db:create db:migrate
+  docker compose run web rails db:create db:migrate
   ```
 
 ## 8. Running Background Jobs
@@ -61,11 +126,11 @@
 ## 9. Useful Commands
 
 - **Rails console:**
-  `docker-compose run web rails console`
+  `docker compose run web rails console`
 - **Run tests:**
-  (No test framework is specified in the Gemfile. If you add RSpec or Minitest, use the appropriate command, e.g., `docker-compose run web bundle exec rspec`.)
+  (No test framework is specified in the Gemfile. If you add RSpec or Minitest, use the appropriate command, e.g., `docker compose run web bundle exec rspec`.)
 - **Precompile assets:**
-  `docker-compose run web rails assets:precompile`
+  `docker compose run web rails assets:precompile`
 - **Static analysis:**
   - Security: `bin/brakeman`
   - Linting: `bin/rubocop`
@@ -75,7 +140,7 @@
 - Application code: `app/`
 - Configuration: `config/`
 - Database seeds: `db/seeds.rb`
-- Docker configuration: `Dockerfile`, `docker-compose.yml`
+- Docker configuration: `Dockerfile`, `docker compose.yml`
 - Setup script: `bin/setup` (installs dependencies, prepares DB, clears logs)
 
 ## 11. Notes
@@ -84,30 +149,3 @@
 - Assets are precompiled during the Docker build.
 - For production, set `RAILS_ENV=production` and provide the correct `RAILS_MASTER_KEY`.
 - To update dependencies or reset the environment, use `bin/setup`.
-
----
-
-# README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-- Ruby version
-
-- System dependencies
-
-- Configuration
-
-- Database creation
-
-- Database initialization
-
-- How to run the test suite
-
-- Services (job queues, cache servers, search engines, etc.)
-
-- Deployment instructions
-
-- ...

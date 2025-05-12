@@ -11,3 +11,7 @@ default: &default
 development:
   <<: *default
   database: web_scraper_development
+
+test:
+  <<: *default
+  database: web_scraper_test
